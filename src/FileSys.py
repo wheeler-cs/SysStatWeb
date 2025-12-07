@@ -1,6 +1,8 @@
+import os
 import shutil
 from typing import Tuple
 
+UNIT_NONE = 1
 UNIT_KiB = 1_024
 UNIT_MiB = 1_048_576
 UNIT_GiB = 1_073_741_824
@@ -19,10 +21,17 @@ def get_fs_metrics(sample_path: str = __file__,
     Returns:
         The total, used, and free disk space.
     '''
-    total, used, free = shutil.disk_usage(sample_path)
-    total /= unit
-    used /= unit
-    free /= unit
+    try:
+        total, used, free = shutil.disk_usage(sample_path)
+        total /= unit
+        used /= unit
+        free /= unit
+    except Exception as e:
+        print(
+            f"[ERR] Error occurred when attempting to get filesystem size: {e}")
+        total = 1
+        used = 1
+        free = 1
     return total, used, free
 
 
@@ -35,7 +44,7 @@ def get_fs_percent_used(unit: int = UNIT_GiB) -> float:
     Returns:
         The percentage of disk space currently used.
     '''
-    total, used, _ = get_fs_metrics(unit=unit)
+    total, used, free = get_fs_metrics(unit=unit)
     return used / total
 
 

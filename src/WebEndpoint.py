@@ -14,8 +14,10 @@ class Handler(BaseHTTPRequestHandler):
         '''
 
         '''
+        print("[INFO] Sending filesystem info")
         response_body = json.dumps(data).encode("utf-8")
         self.send_response(status)
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(response_body)))
         self.end_headers()
@@ -25,6 +27,7 @@ class Handler(BaseHTTPRequestHandler):
         '''
 
         '''
+        print("[INFO] Received request for filesystem usage")
         if self.path == "/fs/percent-used":
             self.respond_json(200,
                               {"message": str(FileSys.get_fs_percent_used())})
